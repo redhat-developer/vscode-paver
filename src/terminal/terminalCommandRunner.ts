@@ -18,7 +18,7 @@ class TerminalCommandRunner implements Disposable {
     public async runInTerminal(command: string, options: ITerminalOptions): Promise<Terminal> {
 
         let terminal: Terminal | undefined;
-        const name = "Granite Models Setup";
+        const name = options.name;
         if (window.terminals.length) {
             terminal = window.terminals.find(t => name === t.name);
         }
