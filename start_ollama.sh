@@ -1,95 +1,84 @@
 #!/bin/bash
 
 # Timeout for waiting for Ollama to start (in seconds)
-TIMEOUT=60
+readonly TIMEOUT=60
+readonly OLLAMA_API_URL="http://localhost:11434/api/version"
 
-# Function to check if a command is available
+# Check if a command exists
 command_exists() {
     command -v "$1" >/dev/null 2>&1
 }
 
-# Function to check if we are in a container (GitHub Codespaces or similar)
+# Check if Ollama is already running
+ollama_is_running() {
+    VERSION=$(curl -s --fail --max-time 1 "$OLLAMA_API_URL" | grep '"version"' | awk -F: '{ print $2 }' | sed -e 's/.*"\([^"]*\)".*/\1/')
+    test -n "$VERSION"
+}
+
+# Determine if running in a container environment
 in_container() {
-    # Check if we're running in GitHub Codespaces by checking the environment variable
     [[ -f /.dockerenv || -f /run/.containerenv ]]
 }
 
-# Function to start Ollama and check if it's running
+# Start Ollama service or background process
 start_ollama() {
-    if [ "$1" = "service" ]; then
-        echo "Starting Ollama service..."
+    local start_method="${1:-background}"
+    echo "Starting Ollama ($start_method)..."
+
+    if [[ "$start_method" == "service" ]]; then
         if in_container; then
-            # Use the service command in a container
-            service ollama start
+            service ollama start || return $?
         else
-            sudo systemctl start ollama
+            sudo systemctl start ollama || return $?
         fi
     else
-        echo "Starting Ollama as a background process..."
         nohup ollama serve >/dev/null 2>&1 &
     fi
 
-    # Wait for Ollama to start (max TIMEOUT seconds)
-    for i in $(seq 1 $TIMEOUT); do
-        if curl -s --max-time 1 http://localhost:11434/api/version >/dev/null; then
-            echo "Ollama started successfully."
+    # Wait for Ollama to start. TIMEOUT * 4, since we sleep 1/4 sec on each iteration 
+    for _ in $(seq 1 $((TIMEOUT * 4))); do
+        if ollama_is_running; then
+            echo -e "\nOllama started successfully."
             return 0
         fi
-
-        # Display a progress indicator
-        printf "."
-        sleep 1
+        (( _ % 2 == 0 )) && printf "."
+        sleep 0.25
     done
 
-    echo -e "\nFailed to start Ollama."
+    echo -e "\nTimeout: Failed to start Ollama."
     return 1
 }
 
-# Main logic
-if curl -s --max-time 1 http://localhost:11434/api/version >/dev/null; then
-    echo "Ollama already started."
-    exit 0
-fi
+# Main script execution
+main() {
+    # Early exit if Ollama is already running
+    if ollama_is_running; then
+        echo "Ollama is already running."
+        return 0
+    fi
 
-if in_container; then
-    echo "Running in a container environment."
-    # Check if Ollama is running using the service command
-    if service --status-all 2>&1 | grep -q 'ollama'; then
-        if service ollama status >/dev/null 2>&1; then
-            echo "Ollama service is already running."
-            exit 0
-        else
-            echo "Starting Ollama service..."
-            if start_ollama service; then
-                exit 0
-            else
-                exit 1
-            fi
+    # Try starting via service if possible
+    if in_container; then
+        if service --status-all 2>&1 | grep -qw 'ollama'; then
+            start_ollama service || return $?
+            return 0
+        fi
+    elif command_exists systemctl; then
+        if systemctl list-unit-files ollama.service >/dev/null 2>&1; then
+            start_ollama service || return $?
+            return 0
         fi
     fi
-else
-    if command_exists systemctl; then
-        if systemctl is-active --quiet ollama; then
-            echo "Ollama service is already running."
-            exit 0
-        elif systemctl list-unit-files ollama.service >/dev/null 2>&1; then
-            echo "Starting Ollama service..."
-            if start_ollama service; then
-                exit 0
-            else
-                exit 1
-            fi
-        fi
-    fi
-fi
 
-if command_exists ollama; then
-    if start_ollama; then
-        exit 0
+    # Fallback to background process
+    if command_exists ollama; then
+        start_ollama || return 1
     else
-        exit 1
+        echo "Error: Ollama is not installed or not in the PATH." >&2
+        return 1
     fi
-else
-    echo "Ollama is not installed or not in the PATH."
-    exit 1
-fi
+}
+
+# Run the main function and exit with its status
+main
+exit $?
