@@ -14,14 +14,14 @@ import { getRecommendedModels } from "../../src/commons/sysInfo";
 function App() {
   const modelOptions: ModelOption[] = [
     {
-      label: "granite3-dense:2b",
-      value: "granite3-dense:2b",
-      info: formatSize(MODEL_REQUIREMENTS["granite3-dense:2b"].sizeBytes)
+      label: "granite3.1-dense:2b",
+      value: "granite3.1-dense:2b",
+      info: formatSize(MODEL_REQUIREMENTS["granite3.1-dense:2b"].sizeBytes)
     },
     {
-      label: "granite3-dense:8b",
-      value: "granite3-dense:8b",
-      info: formatSize(MODEL_REQUIREMENTS["granite3-dense:8b"].sizeBytes)
+      label: "granite3.1-dense:8b",
+      value: "granite3.1-dense:8b",
+      info: formatSize(MODEL_REQUIREMENTS["granite3.1-dense:8b"].sizeBytes)
     },
     {
       label: "granite-code:3b",

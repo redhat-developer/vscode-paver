@@ -11,7 +11,8 @@ import {
   WebviewPanel,
   window
 } from "vscode";
-import { DOWNLOADABLE_MODELS, isDevMode } from '../commons/constants';
+import { isDevMode } from '../commons/constants';
+import { DOWNLOADABLE_MODELS } from '../commons/modelRequirements';
 import { ProgressData } from "../commons/progressData";
 import { ModelStatus, ServerStatus } from '../commons/statuses';
 import { IModelServer } from '../modelServer';

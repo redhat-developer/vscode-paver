@@ -81,8 +81,8 @@ describe("App Component", () => {
     expect(mockPostMessage).toHaveBeenCalledWith({
       command: "setupGranite",
       data: {
-        chatModelId: "granite3-dense:2b",
-        tabModelId: "granite3-dense:2b",
+        chatModelId: "granite3.1-dense:2b",
+        tabModelId: "granite3.1-dense:2b",
         embeddingsModelId: "nomic-embed-text:latest",
       },
     });
@@ -162,8 +162,8 @@ describe("App Component", () => {
     expect(mockPostMessage).toHaveBeenCalledWith({
       command: "setupGranite",
       data: {
-        chatModelId: "granite3-dense:2b",
-        tabModelId: "granite3-dense:2b",
+        chatModelId: "granite3.1-dense:2b",
+        tabModelId: "granite3.1-dense:2b",
         embeddingsModelId: "nomic-embed-text:latest",
       },
     });

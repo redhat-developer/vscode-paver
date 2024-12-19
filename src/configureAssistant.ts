@@ -36,7 +36,7 @@ export interface AiAssistantConfigurationRequest {
   embeddingsModel: string | null;
 }
 
-const DEFAULT_CONTEXT_LENGTH = 4096;
+const DEFAULT_CONTEXT_LENGTH = 128000;
 const DEFAULT_API_BASE = "http://localhost:11434";
 const DEFAULT_PROVIDER = "ollama";
 
@@ -52,7 +52,7 @@ const baseGraniteConfig: Partial<ModelConfig> = {
   ...baseConfig,
   contextLength: DEFAULT_CONTEXT_LENGTH,
   completionOptions: {
-    maxTokens: DEFAULT_CONTEXT_LENGTH / 2,
+    maxTokens: DEFAULT_CONTEXT_LENGTH / 4,
     temperature: 0,
     topP: 0.9,
     topK: 40,
@@ -74,11 +74,11 @@ const modelConfigs: ModelConfig[] = [
     contextLength: 128000,
   },
   {
-    model: "granite3-dense:2b",
+    model: "granite3.1-dense:2b",
     ...baseGraniteConfig,
   },
   {
-    model: "granite3-dense:8b",
+    model: "granite3.1-dense:8b",
     ...baseGraniteConfig,
   },
   {
