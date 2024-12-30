@@ -80,6 +80,6 @@
   "dependencies": {
     "@redhat-developer/vscode-redhat-telemetry": "^0.9.1",
     "node-html-parser": "^6.1.13",
-    "systeminformation": "^5.23.8"
+    "systeminformation": "^5.23.24"
   }
 }
