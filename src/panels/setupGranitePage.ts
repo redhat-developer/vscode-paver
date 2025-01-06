@@ -18,7 +18,6 @@ import { IModelServer } from '../modelServer';
 import { MockServer } from '../ollama/mockServer';
 import { OllamaServer } from "../ollama/ollamaServer";
 import { Telemetry } from '../telemetry';
-import { terminalCommandRunner } from '../terminal/terminalCommandRunner';
 import { getNonce } from "../utils/getNonce";
 import { getUri } from "../utils/getUri";
 import { getSystemInfo } from "../utils/sysUtils";
@@ -241,13 +240,8 @@ export class SetupGranitePage {
             });
             break;
           case "startOllama":
-            await terminalCommandRunner.runInTerminal(
-              'ollama start',
-              {
-                name: "Start Ollama",
-                show: true,
-              }
-            );
+            await this.server.startServer();
+            break;
           case "installOllama":
             await this.server.installServer(data.mode);
             break;

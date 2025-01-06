@@ -92,11 +92,36 @@ export class OllamaServer implements IModelServer {
   }
 
   async startServer(): Promise<boolean> {
-    // await terminalCommandRunner.runInTerminal("ollama list", {
-    //   name: "Granite Code Setup",
-    //   show: true,
-    // });
-    return true;
+    let startCommand: string | undefined;
+    if (isWin()) {
+      startCommand = [
+        `$ErrorActionPreference = "Stop"`,
+        `& "ollama app.exe"`,
+      ].join(' ; ');
+    } else if (isMac()) {
+      startCommand = [
+        'set -e',  // Exit immediately if a command exits with a non-zero status
+        'open -a Ollama.app',
+      ].join(' && ');
+    } else {//Linux
+      const start_ollama_sh = path.join(this.context.extensionPath, 'start_ollama.sh');
+      startCommand = [
+        'set -e',  // Exit immediately if a command exits with a non-zero status
+        `chmod +x "${start_ollama_sh}"`,  // Ensure the script is executable
+        `"${start_ollama_sh}"`,  // Use quotes in case the path contains spaces
+      ].join(' && ');
+    }
+    if (startCommand) {
+      await terminalCommandRunner.runInTerminal(
+        startCommand,
+        {
+          name: "Start Ollama",
+          show: true,
+        }
+      );
+      return true;
+    }
+    return false;
   }
 
   async installServer(mode: string): Promise<boolean> {
@@ -398,6 +423,11 @@ function isLinux(): boolean {
 function isWin(): boolean {
   return PLATFORM.startsWith("win");
 }
+
+function isMac(): boolean {
+  return PLATFORM === "darwin";
+}
+
 function isDevspaces() {
   //sudo is not available on Red Hat DevSpaces
   return process.env['DEVWORKSPACE_ID'] !== undefined;
