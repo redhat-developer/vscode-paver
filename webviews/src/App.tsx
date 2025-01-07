@@ -122,6 +122,12 @@ function App() {
     });
   }
 
+  function handleStartOllama(): void {
+    vscode.postMessage({
+      command: "startOllama"
+    });
+  }
+
   const REFETCH_MODELS_INTERVAL_MS = 1500;
   let ollamaStatusChecker: NodeJS.Timeout | undefined;
 
@@ -313,30 +319,36 @@ function App() {
             </label>
 
             {/* New section for additional buttons */}
-            {serverStatus === ServerStatus.missing &&
-              installationModes.length > 0 && (
-                <div className="install-options">
-                  {installationModes.some(
-                    (mode) => mode.supportsRefresh === true
-                  ) && (
-                      <p>
-                        <span>
-                          This page will refresh once Ollama is installed.
-                        </span>
-                      </p>
-                    )}
-                  {installationModes.map((mode) => (
-                    <button
-                      key={mode.id}
-                      className="install-button"
-                      onClick={() => handleInstallOllama(mode.id)}
-                      disabled={!enabled}
-                    >
-                      {mode.label}
-                    </button>
-                  ))}
-                </div>
-              )}
+            {serverStatus === ServerStatus.missing && installationModes.length > 0 && (
+              <div className="install-options">
+                {installationModes.some(mode => mode.supportsRefresh === true) && (
+                  <p><span>This page will refresh once Ollama is installed.</span></p>
+                )}
+                {installationModes.map((mode) => (
+                  <button
+                    key={mode.id}
+                    className="install-button"
+                    onClick={() => handleInstallOllama(mode.id)}
+                    disabled={!enabled}
+                  >
+                    {mode.label}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {
+              // show start ollama button when server stopped
+              serverStatus === ServerStatus.stopped && (
+                <button
+                  className="install-button"
+                  onClick={() => handleStartOllama()}
+                >
+                  Start Ollama
+                </button>
+              )
+            }
+
           </div>
         </div>
         {(diskSpaceCheck.warnings.length > 0 || diskSpaceCheck.errors.length > 0) && (

@@ -239,6 +239,9 @@ export class SetupGranitePage {
               },
             });
             break;
+          case "startOllama":
+            await this.server.startServer();
+            break;
           case "installOllama":
             await this.server.installServer(data.mode);
             break;
