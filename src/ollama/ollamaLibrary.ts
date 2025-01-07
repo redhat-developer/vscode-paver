@@ -1,46 +1,42 @@
-import { parse } from 'node-html-parser';
+import crypto from 'crypto';
 import { ModelInfo } from '../commons/modelInfo';
+import { formatSize } from '../commons/textUtils';
 
 const cache = new Map<string, ModelInfo | undefined>();//TODO limit caching lifespan
 
-const INFO_DELIMITER = ' · ';
-
-// This is fugly, extremely brittle, but we have no other choice because The ollama library doesn't seem to expose an API we can query.
 export async function getRemoteModelInfo(modelId: string): Promise<ModelInfo | undefined> {
   // Check if the result is already cached
   if (cache.has(modelId)) {
     return cache.get(modelId);
   }
   const start = Date.now();
-
-  const url = `https://ollama.com/library/${modelId}`;
+  const [modelName, tag] = modelId.split(":");
+  const url = `https://registry.ollama.ai/v2/library/${modelName}/manifests/${tag}`;
   try {
     const response = await fetch(url, { signal: AbortSignal.timeout(3000) });
 
     if (!response.ok) {
       throw new Error(`Failed to fetch the model page: ${response.statusText}`);
     }
-    const html = await response.text();
-    const root = parse(html);
-    const fileExplorer = root.querySelector('#file-explorer');
-    const itemsCenter = fileExplorer?.querySelector('.items-center');
-    const lastParagraphElement = itemsCenter?.querySelectorAll('p')?.pop();
 
-    if (lastParagraphElement) {
-      const lastParagraph = lastParagraphElement.text.trim();
-      if (lastParagraph.includes(INFO_DELIMITER)) {
-        const [digest, size] = lastParagraph.split(INFO_DELIMITER).map(item => item.trim());
-        const data: ModelInfo = {
-          id: modelId,
-          size,
-          digest
-        };
-        // Cache the successful result
-        cache.set(modelId, data);
-        console.log('Model info:', data);
-        return data;
-      }
-    }
+    // First, read the response body as an ArrayBuffer to compute the digest
+    const buffer = await response.arrayBuffer();
+    const digest = getDigest(buffer);
+
+    // Then, decode the ArrayBuffer into a string and parse it as JSON
+    const text = new TextDecoder().decode(buffer);
+    const manifest = JSON.parse(text) as { layers: { size: number }[] };
+    const modelSize = manifest.layers.reduce((sum, layer) => sum + layer.size, 0);
+
+    const data: ModelInfo = {
+      id: modelId,
+      size: formatSize(modelSize),
+      digest
+    };
+    // Cache the successful result
+    cache.set(modelId, data);
+    console.log('Model info:', data);
+    return data;
   } catch (error) {
     console.error(`Error fetching or parsing model info: ${error}`);
   } finally {
@@ -51,4 +47,10 @@ export async function getRemoteModelInfo(modelId: string): Promise<ModelInfo | u
   // Cache the failure
   cache.set(modelId, undefined);
   return undefined;
+}
+
+function getDigest(buffer: ArrayBuffer): string {
+  const hash = crypto.createHash('sha256');
+  hash.update(Buffer.from(buffer));
+  return hash.digest('hex');
 }
