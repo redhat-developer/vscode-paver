@@ -1,7 +1,7 @@
-import { VscArrowCircleDown, VscCircleLarge, VscCircleLargeFilled, VscPass, VscPassFilled } from "react-icons/vsc";
+import { VscArrowCircleDown, VscCircleLarge, VscCircleLargeFilled, VscPass, VscPassFilled, VscStopCircle } from "react-icons/vsc";
 
 
-export type StatusValue = 'complete' | 'installing' | 'partial' | 'missing';
+export type StatusValue = 'complete' | 'installing' | 'partial' | 'missing' | 'stopped';
 
 export interface StatusCheckProps {
   type: StatusValue | null;
@@ -9,6 +9,7 @@ export interface StatusCheckProps {
 }
 
 const DEFAULT_COLOR = "var(--vscode-textLink-foreground)";
+const ERROR_COLOR = "var(--vscode-errorForeground)";
 
 export const StatusCheck: React.FC<StatusCheckProps> = ({ type, title }: StatusCheckProps) => {
   switch (type) {
@@ -20,6 +21,8 @@ export const StatusCheck: React.FC<StatusCheckProps> = ({ type, title }: StatusC
       return <VscArrowCircleDown color={DEFAULT_COLOR} title={title} />;
     case "partial":
       return <VscPass color={DEFAULT_COLOR} title={title} />;
+    case "stopped":
+      return <VscStopCircle color={ERROR_COLOR} title={title} />
     default: //"missing"
       return <VscCircleLarge title={title} />;
   }
