@@ -28,21 +28,27 @@ jest.mock('react-icons/vsc', () => ({
     <div data-testid="vsc-pass-filled" title={props.title}>
       PassFilled
     </div>
+  )),
+  VscStopCircle: jest.fn(props => (
+    <div data-testid="vsc-stop-circle" title={props.title}>
+      StopCircle
+    </div>
   ))
 }));
 
 // Import the mocked modules
-const { 
-  VscArrowCircleDown, 
-  VscCircleLarge, 
-  VscCircleLargeFilled, 
-  VscPass, 
-  VscPassFilled 
+const {
+  VscArrowCircleDown,
+  VscCircleLarge,
+  VscCircleLargeFilled,
+  VscPass,
+  VscPassFilled,
+  VscStopCircle
 } = jest.requireMock('react-icons/vsc');
 
 describe('StatusCheck Component', () => {
   const defaultColor = "var(--vscode-textLink-foreground)";
-
+  const errorColor = "var(--vscode-errorForeground)";
   beforeEach(() => {
     // Clear mock calls before each test
     jest.clearAllMocks();
@@ -84,6 +90,15 @@ describe('StatusCheck Component', () => {
     );
   });
 
+  it('renders stopped type with Stop icon', () => {
+    const { getByTestId } = render(<StatusCheck type="stopped" />);
+    expect(getByTestId('vsc-stop-circle')).toBeInTheDocument();
+    expect(VscStopCircle).toHaveBeenCalledWith(
+      expect.objectContaining({ color: errorColor }),
+      expect.any(Object)
+    );
+  });
+
   it('renders missing type with CircleLarge icon', () => {
     const { getByTestId } = render(<StatusCheck type="missing" />);
     expect(getByTestId('vsc-circle-large')).toBeInTheDocument();
@@ -104,13 +119,14 @@ describe('StatusCheck Component', () => {
   });
 
   it('handles all possible status values', () => {
-    const statusValues: (StatusValue | null)[] = [null, 'complete', 'installing', 'partial', 'missing'];
+    const statusValues: (StatusValue | null)[] = [null, 'complete', 'installing', 'partial', 'missing', 'stopped'];
     const testIds = {
       null: 'vsc-circle-large-filled',
       complete: 'vsc-pass-filled',
       installing: 'vsc-arrow-circle-down',
       partial: 'vsc-pass',
-      missing: 'vsc-circle-large'
+      missing: 'vsc-circle-large',
+      stopped: 'vsc-stop-circle'
     };
 
     statusValues.forEach(status => {

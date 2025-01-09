@@ -217,7 +217,7 @@ function App() {
         case ServerStatus.installing:
           return "installing";
         case ServerStatus.stopped:
-          return "partial";
+          return "stopped";
         case ServerStatus.started:
           return "complete";
         case ServerStatus.missing:
