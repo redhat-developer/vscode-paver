@@ -1,4 +1,4 @@
-import { GB } from "./sizeUtils";
+import { GB, MB } from "./sizeUtils";
 import { hasDiscreteGPU, isHighEndApple, SystemInfo } from "./sysInfo";
 import { formatSize } from './textUtils';
 
@@ -34,11 +34,11 @@ export const MODEL_REQUIREMENTS: Record<string, ModelRequirements> = {
     gpuRecommended: true,
     sizeBytes: Math.ceil(4.6 * GB)
   },
-  "nomic-embed-text:latest": {
+  "granite-embedding:278m": {
     minMemoryBytes: 2 * GB,
     recommendedMemoryBytes: 4 * GB,
     gpuRecommended: false,
-    sizeBytes: Math.ceil(0.274 * GB)
+    sizeBytes: Math.ceil(563 * MB)
   }
 };
 

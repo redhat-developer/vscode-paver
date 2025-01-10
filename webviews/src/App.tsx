@@ -40,9 +40,9 @@ function App() {
 
   const embeddingsOptions: ModelOption[] = [
     {
-      label: "nomic-embed-text",
-      value: "nomic-embed-text:latest",
-      info: formatSize(MODEL_REQUIREMENTS["nomic-embed-text:latest"].sizeBytes),
+      label: "granite-embedding",
+      value: "granite-embedding:278m",
+      info: formatSize(MODEL_REQUIREMENTS["granite-embedding:278m"].sizeBytes),
     },
     { label: "Keep existing configuration", value: null, info: null },
   ];

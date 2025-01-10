@@ -65,6 +65,6 @@ export function getRecommendedModels(systemInfo: SystemInfo) {
   return {
     defaultChatModel: defaultGraniteModel,
     defaultTabModel: defaultGraniteModel,
-    defaultEmbeddingsModel: "nomic-embed-text:latest"
+    defaultEmbeddingsModel: "granite-embedding:278m"
   };
 }
