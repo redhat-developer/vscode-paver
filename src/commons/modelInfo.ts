@@ -1,7 +1,7 @@
 export const DEFAULT_MODEL_INFO = new Map<string, ModelInfo>();
 [{
-  id: 'nomic-embed-text:latest',
-  size: '274MB',
+  id: 'granite-embedding:278m',
+  size: '563MB',
   digest: ''
 },
 {

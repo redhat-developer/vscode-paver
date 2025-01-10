@@ -39,7 +39,7 @@ export class MockServer extends OllamaServer implements IModelServer {
     ["granite-code:8b", new MockModel("granite-code:8b", 4000)],
     ["granite-code:20b", new MockModel("granite-code:20b", 11000, ModelStatus.installed)],
     ["granite-code:34b", new MockModel("granite-code:34b", 20000)],
-    ["nomic-embed-text:latest", new MockModel("nomic-embed-text:latest", 274, ModelStatus.stale)],
+    ["granite-embedding:278m", new MockModel("granite-embedding:278m", 563, ModelStatus.stale)],
   ]);
 
   /**

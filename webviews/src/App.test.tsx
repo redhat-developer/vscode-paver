@@ -83,7 +83,7 @@ describe("App Component", () => {
       data: {
         chatModelId: "granite3.1-dense:2b",
         tabModelId: "granite3.1-dense:2b",
-        embeddingsModelId: "nomic-embed-text:latest",
+        embeddingsModelId: "granite-embedding:278m",
       },
     });
   });
@@ -164,7 +164,7 @@ describe("App Component", () => {
       data: {
         chatModelId: "granite3.1-dense:2b",
         tabModelId: "granite3.1-dense:2b",
-        embeddingsModelId: "nomic-embed-text:latest",
+        embeddingsModelId: "granite-embedding:278m",
       },
     });
   });

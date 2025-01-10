@@ -82,7 +82,7 @@ const modelConfigs: ModelConfig[] = [
     ...baseGraniteConfig,
   },
   {
-    model: "nomic-embed-text",
+    model: "granite-embedding:278m",
     ...baseConfig,
   }
 ];
@@ -90,7 +90,7 @@ const modelConfigs: ModelConfig[] = [
 function getModelConfig(model: string): ModelConfig {
   let modelConfig = modelConfigs.find(m => m.model === model);
   if (!modelConfig) {
-    const configTemplate = model.includes("granite") ? baseGraniteConfig : baseConfig;
+    const configTemplate = model.includes("embed") ? baseConfig : baseGraniteConfig;
     modelConfig = {
       ...configTemplate,
       model,
