@@ -1,5 +1,11 @@
 # Paver
 
+---
+
+> ⚠️ This repository is archived and no longer maintained. It is recommended to use the [Granite.Code](https://github.com/Granite-Code/granite-code) extension instead.
+
+---
+
 `Paver` simplifies the setup of the
 [Continue extension](https://marketplace.visualstudio.com/items?itemName=Continue.continue)
 to integrate [IBM](https://www.ibm.com/)'s
